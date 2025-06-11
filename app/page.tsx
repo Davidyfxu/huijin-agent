@@ -8,6 +8,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast, { Toaster } from "react-hot-toast";
 import type { ComponentPropsWithoutRef } from "react";
+import { LoadingAnimation } from "./components/LoadingAnimation";
 
 interface Message {
   id: string;
@@ -27,9 +28,32 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingPhase, setLoadingPhase] = useState<
+    "searching" | "generating" | null
+  >(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(40);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (loadingPhase === "searching" && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setLoadingPhase("generating");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [loadingPhase, countdown]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,20 +76,28 @@ export default function Home() {
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    setLoadingPhase("searching");
+    setCountdown(40);
+
+    // Start the chat request immediately
+    const chatPromise = fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message: userMessage.content,
+        sessionId,
+      }),
+    });
+
+    // Start the knowledge base search animation
+    const searchPromise = new Promise((resolve) => setTimeout(resolve, 40000));
 
     try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: userMessage.content,
-          sessionId,
-        }),
-      });
-
-      const data: ChatResponse = await response.json();
+      // Wait for both the chat response and the search animation
+      const [chatResponse, _] = await Promise.all([chatPromise, searchPromise]);
+      const data: ChatResponse = await chatResponse.json();
 
       if (data.success) {
         const assistantMessage: Message = {
@@ -85,6 +117,8 @@ export default function Home() {
       toast.error("网络错误，请检查连接");
     } finally {
       setIsLoading(false);
+      setLoadingPhase(null);
+      setCountdown(40);
     }
   };
 
@@ -348,48 +382,10 @@ export default function Home() {
                     ))}
                   </AnimatePresence>
                   {isLoading && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-start"
-                    >
-                      <div className="flex items-start space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-500 to-teal-600 flex items-center justify-center">
-                          <Bot className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="glass rounded-2xl p-4 bg-gray-700/50 border-gray-600/30">
-                          <div className="flex space-x-1">
-                            <motion.div
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{
-                                duration: 0.6,
-                                repeat: Infinity,
-                                delay: 0,
-                              }}
-                              className="w-2 h-2 bg-blue-400 rounded-full"
-                            />
-                            <motion.div
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{
-                                duration: 0.6,
-                                repeat: Infinity,
-                                delay: 0.2,
-                              }}
-                              className="w-2 h-2 bg-blue-400 rounded-full"
-                            />
-                            <motion.div
-                              animate={{ scale: [1, 1.2, 1] }}
-                              transition={{
-                                duration: 0.6,
-                                repeat: Infinity,
-                                delay: 0.4,
-                              }}
-                              className="w-2 h-2 bg-blue-400 rounded-full"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
+                    <LoadingAnimation
+                      phase={loadingPhase}
+                      countdown={countdown}
+                    />
                   )}
                 </div>
               )}
