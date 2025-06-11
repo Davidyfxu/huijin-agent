@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import toast, { Toaster } from "react-hot-toast";
+import type { ComponentPropsWithoutRef } from "react";
 
 interface Message {
   id: string;
@@ -300,19 +301,20 @@ export default function Home() {
                               {message.role === "assistant" ? (
                                 <ReactMarkdown
                                   components={{
-                                    code({
-                                      node,
+                                    code: ({
                                       inline,
                                       className,
                                       children,
                                       ...props
-                                    }) {
+                                    }: ComponentPropsWithoutRef<"code"> & {
+                                      inline?: boolean;
+                                    }) => {
                                       const match = /language-(\w+)/.exec(
                                         className || ""
                                       );
                                       return !inline && match ? (
                                         <SyntaxHighlighter
-                                          style={atomDark}
+                                          style={atomDark as any}
                                           language={match[1]}
                                           PreTag="div"
                                           {...props}
