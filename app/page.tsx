@@ -202,7 +202,7 @@ export default function Home() {
                 <div className="w-32 h-32 bg-white rounded-lg p-3 mx-auto mb-4">
                   <img
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(
-                      "https://video.aliyuncs.com/aicall?token=eyJSZXF1ZXN0SWQiOiI1RTI1MzlEMi0zN0QzLTU5MTUtOTY0Qi03OTYzQUYyQzI5OTAiLCJXb3JrZmxvd1R5cGUiOiJWb2ljZUNoYXQiLCJUZW1wb3JhcnlBSUFnZW50SWQiOiJjYzJiMDYwNzEzNGQ0MjdiYjg1NDAyMTE3NGJlMjM1YiIsIkV4cGlyZVRpbWUiOiIyMDI1LTA2LTEyIDAzOjM1OjE0IiwiTmFtZSI6IkVRenRlWHhqIiwiUmVnaW9uIjoiY24taGFuZ3pob3UifQ=="
+                      "https://video.aliyuncs.com/aicall?token=eyJSZXF1ZXN0SWQiOiJEODk5MUI4Ri1DN0JBLTVBRTktQTYxRS1BQ0ZFODU1QTI0REUiLCJXb3JrZmxvd1R5cGUiOiJWb2ljZUNoYXQiLCJUZW1wb3JhcnlBSUFnZW50SWQiOiJhYjE2NTNjZGM5ZTU0MGQwOTA4OTBlZTgzNWYxZjY0MCIsIkV4cGlyZVRpbWUiOiIyMDI1LTA2LTE5IDAyOjMwOjAzIiwiTmFtZSI6IkZFcXZ3OEJ3IiwiUmVnaW9uIjoiY24taGFuZ3pob3UifQ=="
                     )}`}
                     alt="语音通话二维码"
                     className="w-full h-full object-contain"
@@ -222,9 +222,7 @@ export default function Home() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
-                    window.open(
-                      "https://video.aliyuncs.com/aicall?token=eyJSZXF1ZXN0SWQiOiI1RTI1MzlEMi0zN0QzLTU5MTUtOTY0Qi03OTYzQUYyQzI5OTAiLCJXb3JrZmxvd1R5cGUiOiJWb2ljZUNoYXQiLCJUZW1wb3JhcnlBSUFnZW50SWQiOiJjYzJiMDYwNzEzNGQ0MjdiYjg1NDAyMTE3NGJlMjM1YiIsIkV4cGlyZVRpbWUiOiIyMDI1LTA2LTEyIDAzOjM1OjE0IiwiTmFtZSI6IkVRenRlWHhqIiwiUmVnaW9uIjoiY24taGFuZ3pob3UifQ==",
-                      "_blank"
+                    window.open('https://video.aliyuncs.com/aicall?token=eyJSZXF1ZXN0SWQiOiJEODk5MUI4Ri1DN0JBLTVBRTktQTYxRS1BQ0ZFODU1QTI0REUiLCJXb3JrZmxvd1R5cGUiOiJWb2ljZUNoYXQiLCJUZW1wb3JhcnlBSUFnZW50SWQiOiJhYjE2NTNjZGM5ZTU0MGQwOTA4OTBlZTgzNWYxZjY0MCIsIkV4cGlyZVRpbWUiOiIyMDI1LTA2LTE5IDAyOjMwOjAzIiwiTmFtZSI6IkZFcXZ3OEJ3IiwiUmVnaW9uIjoiY24taGFuZ3pob3UifQ==', "_blank"
                     );
                   }}
                   className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-teal-600 rounded-lg text-white font-medium hover:shadow-lg transition-shadow flex items-center justify-center space-x-2"
